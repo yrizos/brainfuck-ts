@@ -10,16 +10,16 @@ export class Processor {
     this.output = '';
   }
 
-  executeAll(instructions: Token[]): void {
+  execute(instructions: Token[]): void {
     let pointer = 0;
 
     while (pointer < instructions.length) {
-      pointer = this.execute(pointer, instructions);
+      pointer = this.executeInstruction(pointer, instructions);
       pointer++;
     }
   }
 
-  execute(pointer: number, instructions: Token[]): number {
+  private executeInstruction(pointer: number, instructions: Token[]): number {
     const instruction = instructions[pointer];
 
     switch (instruction) {
@@ -69,9 +69,11 @@ export class Processor {
 
     while (loopNesting > 0) {
       pointer++;
+
       if (pointer >= instructions.length) {
         throw new Error("Unmatched '[' in the code");
       }
+
       if (instructions[pointer] === '[') {
         loopNesting++;
       } else if (instructions[pointer] === ']') {

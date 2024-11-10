@@ -12,27 +12,43 @@ describe('Processor', () => {
   });
 
   it('should handle a series of increment instructions', () => {
-    const instructions = tokenize('+++.');
+    const instructions: Token[] = tokenize('+++.');
 
-    processor.executeAll(instructions);
+    processor.execute(instructions);
 
     expect(processor.getOutput()).toBe(String.fromCharCode(3));
   });
 
   it('should handle a series of decrement instructions', () => {
-    const instructions = tokenize('---.');
+    const instructions: Token[] = tokenize('---.');
 
-    processor.executeAll(instructions);
+    processor.execute(instructions);
 
     expect(processor.getOutput()).toBe(String.fromCharCode(253));
   });
 
   it('should handle a series of increment and decrement instructions', () => {
-    const instructions = tokenize('+++-.');
+    const instructions: Token[] = tokenize('+++-.');
 
-    processor.executeAll(instructions);
+    processor.execute(instructions);
 
     expect(processor.getOutput()).toBe(String.fromCharCode(2));
+  });
+
+  it('should handle unmatched "[" error', () => {
+    const instructions: Token[] = tokenize('++[');
+
+    expect(() => processor.execute(instructions)).toThrow(
+      "Unmatched '[' in the code"
+    );
+  });
+
+  it('should handle unmatched "]" error', () => {
+    const instructions: Token[] = tokenize('++]');
+
+    expect(() => processor.execute(instructions)).toThrow(
+      "Unmatched ']' in the code"
+    );
   });
 
   it('should correctly set slot 1 to 100 and output "d"', () => {
@@ -48,12 +64,12 @@ describe('Processor', () => {
     // 5. '.' - Output the ASCII character corresponding to the value in slot 1 (100), which is 'd'.
     const instructions: Token[] = tokenize('++++++++++[>++++++++++<-]>.');
 
-    processor.executeAll(instructions);
+    processor.execute(instructions);
 
     expect(processor.getOutput()).toBe('d');
   });
 
-  test('should correctly set slot 2 to 64 and output "@"', () => {
+  it('should correctly set slot 2 to 64 and output "@"', () => {
     // 1. '++++++++' - Initialize slot 0 with the value 8. This will act as the counter for the outer loop.
     // 2. '[' - Start the outer loop, which will run as long as slot 0 is not zero (8 iterations).
     //    a. '>' - Move to slot 1.
@@ -72,7 +88,7 @@ describe('Processor', () => {
 
     const instructions: Token[] = tokenize('++++++++[>++++++++[>+<-]<-]>>.');
 
-    processor.executeAll(instructions);
+    processor.execute(instructions);
 
     expect(processor.getOutput()).toBe('@');
   });
