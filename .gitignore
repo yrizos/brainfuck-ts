@@ -6,6 +6,7 @@ dist/
 build/
 *.js
 *.js.map
+!jest.config.js
 
 # Local environment settings
 .env
