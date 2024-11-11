@@ -11,6 +11,8 @@ export class Processor {
   }
 
   execute(instructions: Token[]): void {
+    this.validateBrackets(instructions);
+
     let pointer = 0;
 
     while (pointer < instructions.length) {
@@ -64,42 +66,63 @@ export class Processor {
     return this.output;
   }
 
-  private jumpToEndOfLoop(pointer: number, instructions: Token[]): number {
-    let loopNesting = 1;
+  private validateBrackets(instructions: Token[]): void {
+    let pointer = 0;
 
-    while (loopNesting > 0) {
+    while (pointer < instructions.length) {
+      const instruction = instructions[pointer];
+
+      if (instruction === '[') {
+        pointer = this.findMatchingBracket(pointer, instructions, '[', ']');
+      } else if (instruction === ']') {
+        throw new Error("Unmatched ']' in the code");
+      }
+
       pointer++;
-
-      if (pointer >= instructions.length) {
-        throw new Error("Unmatched '[' in the code");
-      }
-
-      if (instructions[pointer] === '[') {
-        loopNesting++;
-      } else if (instructions[pointer] === ']') {
-        loopNesting--;
-      }
     }
 
-    return pointer;
+    pointer = 0;
+    while (pointer < instructions.length) {
+      const instruction = instructions[pointer];
+
+      if (instruction === '[') {
+        this.findMatchingBracket(pointer, instructions, '[', ']');
+      }
+
+      pointer++;
+    }
+  }
+
+  private jumpToEndOfLoop(pointer: number, instructions: Token[]): number {
+    return this.findMatchingBracket(pointer, instructions, '[', ']');
   }
 
   private findMatchingLoopStart(
     pointer: number,
     instructions: Token[]
   ): number {
+    return this.findMatchingBracket(pointer, instructions, ']', '[');
+  }
+
+  private findMatchingBracket(
+    pointer: number,
+    instructions: Token[],
+    openBracket: Token,
+    closeBracket: Token
+  ): number {
     let loopNesting = 1;
+    const step = openBracket === '[' ? 1 : -1;
 
     while (loopNesting > 0) {
-      pointer--;
+      pointer += step;
 
-      if (pointer < 0) {
-        throw new Error("Unmatched ']' in the code");
+      if (pointer < 0 || pointer >= instructions.length) {
+        throw new Error(`Unmatched '${openBracket}' in the code`);
       }
 
-      if (instructions[pointer] === ']') {
+      if (instructions[pointer] === openBracket) {
         loopNesting++;
-      } else if (instructions[pointer] === '[') {
+      } else if (instructions[pointer] === closeBracket) {
         loopNesting--;
       }
     }

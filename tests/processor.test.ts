@@ -36,7 +36,7 @@ describe('Processor', () => {
   });
 
   it('should handle unmatched "[" error', () => {
-    const instructions: Token[] = tokenize('++[');
+    const instructions: Token[] = tokenize('+++++[');
 
     expect(() => processor.execute(instructions)).toThrow(
       "Unmatched '[' in the code"
