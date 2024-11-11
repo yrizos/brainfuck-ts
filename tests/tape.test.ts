@@ -10,7 +10,7 @@ describe('Tape', () => {
   it('should initialize cells with 0', () => {
     for (let i = 0; i < 10; i++) {
       expect(tape.getValue()).toBe(0);
-      tape.moveRight;
+      tape.moveRight();
     }
   });
 
