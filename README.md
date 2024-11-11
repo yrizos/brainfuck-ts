@@ -31,6 +31,17 @@ npm test
 
 ## Run the CLI
 
+### Hello World
+
 ```sh
 ts-node bin/brainfuck.ts '++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.'
+```
+
+### Input and Output
+
+These examples read characters from the input and outputs them.
+
+```sh
+ts-node bin/brainfuck ',.' 'A'
+ts-node bin/brainfuck ',.,.,.' 'ABC'
 ```
