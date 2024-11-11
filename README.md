@@ -45,3 +45,21 @@ These examples read characters from the input and outputs them.
 ts-node bin/brainfuck ',.' 'A'
 ts-node bin/brainfuck ',.,.,.' 'ABC'
 ```
+
+## Building and Running with Docker
+
+### Build the Docker Image
+
+To build the Docker image, run the following command:
+
+```sh
+docker build -t brainfuck-ts .
+```
+
+### Run the Docker Container
+
+To run the Docker container, use the following command:
+
+```sh
+docker run --rm brainfuck-ts '++++++++++[>+++++++>++++++++++>+++>+<<<<-]>++.>+.+++++++..+++.>++.<<+++++++++++++++.>.+++.------.--------.>+.'
+```
