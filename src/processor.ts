@@ -1,13 +1,14 @@
 import { Tape } from './tape';
 import { Token } from './tokenizer';
+import { Output } from './output';
 
 export class Processor {
   private tape: Tape;
-  private output: string;
+  private output: Output;
 
   constructor(tape: Tape) {
     this.tape = tape;
-    this.output = '';
+    this.output = new Output();
   }
 
   execute(instructions: Token[]): void {
@@ -42,7 +43,7 @@ export class Processor {
 
         break;
       case '.':
-        this.output += String.fromCharCode(this.tape.getValue());
+        this.output.append(this.tape.getValue());
 
         break;
       case '[':
@@ -63,7 +64,7 @@ export class Processor {
   }
 
   getOutput(): string {
-    return this.output;
+    return this.output.getOutput();
   }
 
   private validateBrackets(instructions: Token[]): void {
