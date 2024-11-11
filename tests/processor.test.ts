@@ -1,3 +1,4 @@
+import { Input } from '../src/input';
 import { Processor } from '../src/processor';
 import { Tape } from '../src/tape';
 import { tokenize, Token } from '../src/tokenizer';
@@ -8,12 +9,13 @@ describe('Processor', () => {
 
   beforeEach(() => {
     tape = new Tape(10);
-    processor = new Processor(tape);
   });
 
   it('should handle a series of increment instructions', () => {
     const instructions: Token[] = tokenize('+++.');
+    const input = new Input();
 
+    processor = new Processor(tape, input);
     processor.execute(instructions);
 
     expect(processor.getOutput()).toBe(String.fromCharCode(3));
@@ -21,7 +23,9 @@ describe('Processor', () => {
 
   it('should handle a series of decrement instructions', () => {
     const instructions: Token[] = tokenize('---.');
+    const input = new Input();
 
+    processor = new Processor(tape, input);
     processor.execute(instructions);
 
     expect(processor.getOutput()).toBe(String.fromCharCode(253));
@@ -29,7 +33,9 @@ describe('Processor', () => {
 
   it('should handle a series of increment and decrement instructions', () => {
     const instructions: Token[] = tokenize('+++-.');
+    const input = new Input();
 
+    processor = new Processor(tape, input);
     processor.execute(instructions);
 
     expect(processor.getOutput()).toBe(String.fromCharCode(2));
@@ -63,7 +69,9 @@ describe('Processor', () => {
     // 4. '>' - Move to slot 1, which now contains the value 100.
     // 5. '.' - Output the ASCII character corresponding to the value in slot 1 (100), which is 'd'.
     const instructions: Token[] = tokenize('++++++++++[>++++++++++<-]>.');
+    const input = new Input();
 
+    processor = new Processor(tape, input);
     processor.execute(instructions);
 
     expect(processor.getOutput()).toBe('d');
@@ -87,9 +95,61 @@ describe('Processor', () => {
     // 5. '.' - Output the ASCII character corresponding to the value in slot 2 (64), which is '@'.
 
     const instructions: Token[] = tokenize('++++++++[>++++++++[>+<-]<-]>>.');
+    const input = new Input();
 
+    processor = new Processor(tape, input);
     processor.execute(instructions);
 
     expect(processor.getOutput()).toBe('@');
+  });
+
+  it('should read a single character from input', () => {
+    const instructions: Token[] = tokenize(',.');
+    const input = new Input('A');
+
+    processor = new Processor(tape, input);
+    processor.execute(instructions);
+
+    expect(processor.getOutput()).toBe('A');
+  });
+
+  it('should read multiple characters from input', () => {
+    const instructions: Token[] = tokenize(',.,.,.');
+    const input = new Input('ABC');
+
+    processor = new Processor(tape, input);
+    processor.execute(instructions);
+
+    expect(processor.getOutput()).toBe('ABC');
+  });
+
+  it('should handle input exhaustion by setting tape value to 0', () => {
+    const instructions: Token[] = tokenize(',.,.,.');
+    const input = new Input('A');
+
+    processor = new Processor(tape, input);
+    processor.execute(instructions);
+
+    expect(processor.getOutput()).toBe('A\0\0');
+  });
+
+  it('should correctly process input and other instructions', () => {
+    const instructions: Token[] = tokenize(',+.,-.,.');
+    const input = new Input('AB');
+    processor = new Processor(tape, input);
+
+    processor.execute(instructions);
+
+    expect(processor.getOutput()).toBe('BA\0');
+  });
+
+  it('should handle empty input', () => {
+    const instructions: Token[] = tokenize(',.');
+    const input = new Input('');
+
+    processor = new Processor(tape, input);
+    processor.execute(instructions);
+
+    expect(processor.getOutput()).toBe('\0');
   });
 });

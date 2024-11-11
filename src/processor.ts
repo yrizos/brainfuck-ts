@@ -1,13 +1,16 @@
 import { Tape } from './tape';
 import { Token } from './tokenizer';
+import { Input } from './input';
 import { Output } from './output';
 
 export class Processor {
   private tape: Tape;
   private output: Output;
+  private input: Input;
 
-  constructor(tape: Tape) {
+  constructor(tape: Tape, input: Input) {
     this.tape = tape;
+    this.input = input;
     this.output = new Output();
   }
 
@@ -40,6 +43,11 @@ export class Processor {
         break;
       case '-':
         this.tape.decrement();
+
+        break;
+
+      case ',':
+        this.tape.setValue(this.input.read());
 
         break;
       case '.':
